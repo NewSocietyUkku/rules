@@ -1,0 +1,3223 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+                                          
+
+
+
+
+
+
+
+<head>                                        <meta charset="UTF-8">
+    <title>Working Custom Glossary Example</title>
+                                              <style>
+        .term-link {
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #definition-popup {                           display: none; /* Initially hidden */
+            position: absolute;
+            z-index: 1000;
+            max-width: 300px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        #popup-content {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1><p style="font-size: 27px;">The creation of a new language</p></h1>
+
+<br>
+<br>
+
+
+
+
+
+<!-- ==== 1. PLACE FOR THE TWO TOCs (put near the top of <body>) ==== -->
+
+
+<div id="toc-para-container" style="margin-bottom:2rem;">
+  <h2 style="margin-bottom:0.5rem;">Table of Contents (Major Headings)</h2>
+  <div id="toc-para"></div>
+</div>
+
+
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+<!-- Place this at the top, where your table of contents lives -->
+<nav id="table-of-contents">
+  <!-- your TOC markup -->
+  <!-- ... -->
+</nav>
+
+<div id="toc-main-container" style="margin-bottom:2rem;">
+  <h2 style="margin-bottom:0.5rem;">Table of Contents (Minor Headings)</h2>
+  <div id="toc-main"></div>
+</div>
+
+
+<script>
+  // ------------------------------------------------------------
+  // CONFIGURATION
+  // ------------------------------------------------------------
+  const SECTION_HEADING_SELECTOR = `
+    section > strong, section > b,
+    article > strong, article > b,
+    div > strong, div > b,
+    main > strong, main > b,
+    body > strong, body > b
+  `.replace(/\s+/g, '');
+
+  const PARA_BOLD_SELECTOR = 'p strong, p b';   // <p><b>…</b></p>
+
+  // ------------------------------------------------------------
+  // HELPERS
+  // ------------------------------------------------------------
+  function makeId(text, idx) {
+    const base = text.toLowerCase()
+      .replace(/[^\w]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    let id = base || `item-${idx}`;
+    let counter = 1;
+    while (document.getElementById(id)) {
+      id = `${base}-${counter++}`;
+    }
+    return id;
+  }
+
+  function buildTOC(containerId, selector, titlePrefix = '') {
+    const container = document.getElementById(containerId);
+    const elements = document.querySelectorAll(selector);
+    if (!elements.length) {
+      container.innerHTML = '<em>No items found.</em>';
+      return;
+    }
+
+    const ol = document.createElement('ol');
+    ol.style.paddingLeft = '1.5rem';
+
+    elements.forEach((el, idx) => {
+      const text = el.textContent.trim();
+      if (!text) return;
+
+      // ---- Wrap in container (only once) ----
+      const parent = el.parentNode;
+      if (!parent.classList.contains('toc-container')) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'toc-container';
+        parent.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+      }
+
+      // ---- Assign ID ----
+      let id = el.id;
+      if (!id) {
+        id = makeId(text, idx);
+        el.id = id;
+      }
+
+      // ---- List item ----
+      const li = document.createElement('li');
+      li.style.margin = '0.2rem 0';
+
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      a.textContent = (titlePrefix ? `${titlePrefix} ` : '') + text;
+      a.style.textDecoration = 'none';
+      a.style.color = '#1a0dab';
+      a.onmouseover = () => a.style.textDecoration = 'underline';
+      a.onmouseout  = () => a.style.textDecoration = 'none';
+
+      li.appendChild(a);
+      ol.appendChild(li);
+    });
+
+    container.appendChild(ol);
+  }
+
+  // ------------------------------------------------------------
+  // RUN AFTER PAGE LOAD
+  // ------------------------------------------------------------
+  function initTOCs() {
+    buildTOC('toc-main', SECTION_HEADING_SELECTOR);
+    buildTOC('toc-para', PARA_BOLD_SELECTOR, '!');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTOCs);
+  } else {
+    initTOCs();
+  }
+</script>
+
+<!-- Optional: Style the containers -->
+<style>
+  .toc-container {
+    margin: 1.5rem 0;
+    padding: 0.5rem 0 0.5rem 0.8rem;
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+    border-radius: 0 4px 4px 0;
+  }
+</style>
+
+
+
+
+
+
+
+
+<br>
+<br>
+
+
+
+
+
+
+
+
+
+
+<h1><p style="font-size: 27px;">The creation of a language</p></h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<p style="font-size: 27px;">
+
+<b>
+Important Note
+</p>
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+The following document contains no written example of the language. It has it's own script and that is differcult to repersent in a text editor. 
+
+<br>
+<br>
+
+
+However, next to the link this text is in, you will find examples of the language repersented as numbers. Attached you will also find coding. One is HTML text and the other is Python text.
+
+<br>
+<br>
+
+
+Both are programs to turn these numbers into symbols. Both will work and you can choose either one. All you need to do is copy the code and paste it in a word processing document (e.g. like nano or pydroid) and then save that fule with a .html extention if it is the html code or with a .py extention if it is the python extention. If you have any trouble with this feel free to ask the an AI model for assistance.  
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Explanation of sounds in the primary alphabet
+</b>
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+puente sounds:
+
+<br>
+<br>
+
+
+These are vowels.
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+oculto sounds.:
+
+
+<br>
+<br>
+
+
+These are consonants that can replace the vowels in a syllable in any language.
+For example, ‘pet’ can become ‘prt’
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+estancado sounds:
+
+<br>
+<br>
+
+These are consonants that can be placed between a grupo sound and a oculto sound.
+For example, the ‘k’ in ‘skate.’  
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+grupo sounds:
+
+<br>
+<br>
+
+These are consonants that can be placed before any other sound mentioned above, at the start of a syllable. 
+For example, the ‘s’ in ‘snake.’
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+
+<b>
+Pronouncing words
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+All words are pronounced the same way in which they are written. The direction that a letter is in, tells you when a new syllable begins. Each letter in the alphabet attached, is written in the standard direction. Letters are normally in this direction. However, at the start of every syllable, they are flipped horizontally. 
+
+<br>
+<br>
+
+
+The above is true only for letters in the primary alphabet.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+The direction the language is written in
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+The script first start being writing from left to right. However, when one reaches the end of the page, they simply change the standard direction of writing from left to right, to, right to left. Therefore they will start from the right of the page and move left, flipping all the letters horizontally. 
+
+<br>
+<br>
+
+
+When one has reached the left of the page, then they start writing from left to right,  and so one.
+
+<br>
+<br>
+
+
+As with before, each letter of the primary alphabet that is to start a syllable, goes in the opposite direction to the standard direction. So if the standard direction currently is from right to left, then they letter will be flipped to left to right, at the start of a syllable.
+
+<br>
+<br>
+
+
+
+There exists another way of written which consists of writting first from top to bottom and then to bottom to top and then bottom to top. The letters are still written from left to right or right to left, despute being written in a vertical manner. When one writes frm left to right then they assume the main direction of main direction of the characters from left to right and when written from bottom to top, then the main direction is assumed to be from right to left.
+
+<br>
+<br>
+
+
+
+This allows for more flexibility, as one can choose whether to write vertically or horizontally.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+definición sounds
+</b>
+
+<br>
+<br>
+
+
+In the new language each word needs to start with a definición sound. These sounds only exist at the start of words. Therefore you know when a new word begins in a sentence, by hearing the definición sound.
+
+<br>
+<br>
+
+
+The definición sounds tell you more about the word (what type of word is it.) The details of what each definición sound tells you, can be seen in the alphabet for definición sounds.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+What is allowed in a word
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+All words needs to follow the following properties to be allowed as a word
+<br>
+<br>
+
+
+-must be able to be pronounced the same way which they are written
+
+<br>
+
+-start with a definición sound
+
+<br>
+
+
+-have only sounds formed by either ‘a oculto sound, followed by a estancado sound/estancado sound with grupo sound’ OR ‘ estancado sound/estancado sound with grupo sound/grupo sound’
+e.g. ‘plOAln’ / ‘plOAlns’ OR ‘grut’ / ‘gruts’ OR ‘gras’
+
+<br>
+
+-words in the third form are however, allowed to have a puente sound, that comes directly after a oculto sound. How this works will be explained later in the document.
+
+<br>
+
+
+-any words that have more than one syllable, needs to ensure that their other syllables follow the same order but with the definición sound replaced with a stagement sound at the start/grupo sound plus stagement sound/stagement sound, at the start. 
+e.g. 
+'tan' 'tran' 'stran' 'snan' ‘san’ etc
+<br>
+
+
+They cannot start with a oculto sound, without the stagement sound.
+e.g. it cannot be 'ran', 'lan', ‘ren’, etc
+
+<br>
+
+
+-the stagement sounds ‘z’ and ‘v’, cannot have a grupo sound attached to them. In other words, a grupo sound cannot appear before or after them in the same syllable.
+<br>
+<br>
+
+e.g.
+
+<br>
+<br>
+
+
+They cannot be ‘szre’, ‘svra’, ‘szu’  OR ‘uzs’, ‘ars’, ‘erzs’
+
+<br>
+<br>
+
+
+(An exception for names exist, as they are allowed to break away from the strict rules mentions above)
+
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+<b>
+Sound changes that arise due to nasal and tonal sounds
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+The new language is tonal as it has one tone, a rising tone. This tone is shown by making the puente sound increase in pitch as you are saying it. Some puente sounds are said normally and some are said using a rising tone. You can say this tone the same way you would as in Mandarin (Chinese), or you could do it the same way as in English, and the Romance languages (e.g. Italian, Spanish, etc), when you raise the tone to ask a question. For example, ‘now?’. It doesn’t matter which one of these two raising tones you use. The language is flexible. The two are treated as the same sound.
+
+<br>
+<br>
+
+
+
+However, there exist one exception to this rule where rising tones change. The two R@ and L@ sounds, are said at the bottom of the throat. It is difficult to pronounce R@ or L@, after a rising tone. For that reason, as a rule, if a tonal puente sound appears before a R@ or L@, in the same syllable; then it changes from a raising tone to a tone that rises then descends. In other words, you simply lower the tone at the end as to make the R@ and L@ sounds easier to pronounce.
+
+
+<br>
+<br>
+
+
+Along with R@ and L@ sounds, the new language also has a nasal R sound and a nasal L sound. In order to make it easier to say these nasal oculto sounds, if they appear after a puente sound, then the puente sound before it needs to change. The puente sound can either start normal and become nasal OR start nasal and end nasal. Which one the speaker chooses depends on whatever they feel most comfortable with. If the puente sound is tonal, then the rising tone only starts rising after the puente sound becomes tonal. 
+
+<br>
+<br>
+
+
+As with the two rules above, they don’t need to be practiced constantly, as one will find their mouth will naturally speak that way when saying such words.
+
+<br>
+<br>
+
+
+Below are two further exceptions.
+
+<br>
+<br>
+
+
+1.
+If you have a nasal oculto sound, followed by a puente sound, then followed by a nasal puente sound (e.g. R̃ER̃), then the puente sound becomes nasal (i.e. R̃ẼR̃). The puente sound starts and ends as a nasal sound. The new grupo sound is said at the top of the mouth. However, if you have only a nasal oculto sound, followed by a puente sound, then the nasal oculto sound has no effect on the puente sound. You need both nasal oculto sounds, or only one after the puente sound, for it to have an effect on the puente sound.
+
+<br>
+<br>
+
+
+2.
+This also applies for R@/L@ but instead the puente sound is said as a low pitched tonal sound.
+ e.g. if you have ‘R@aL@’ then you would pronounce the ‘a’ with a lower tone (You will find that you naturally do this while speaking). As with the rule with sounds ending on a R@/L@, if the puente sound is tonal (e.g. R@a?L@), then it changes to a raising and lowering tone. The only difference is that it starts at a much lower tone to begin with to match the R@/L@ sound coming before it.
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Official words in the the new language
+</b>
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+All languages change with time, as new words are added and old words die. However, the new language has a certain number of unchanging words. These are intended to always be in existence. Attached you can find a spreadsheet listing all of these words. 
+
+<br>
+<br>
+
+
+These words form part of what makes the official words of the new language. The other official words are anything created by a system for the nature of those words, and that system does not change. For example, all names start with a specific definición sound. It is not possible to create a list with all the names that exist in the world, but no matter how many, they all part of this official list. Another example of this would be the name giving to living things. You can see the document on taxonomy to understand further how this works. Such words can also be referred to as semi-official, as to distinguish them from the unchangeable word list.
+
+
+<br>
+<br>
+
+
+The words that are not part of the official list, are the words that start with any of the definición sounds at the bottom of the alphabet for definición sounds (hence, start with ‘sD’, ‘D’ OR ‘shD’. The definición sounds attached to these words, only tell you if what these words are describing is, tangible, not tangible or the word doesn’t specify the tangibility of what it is describing.  
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Rules for converting Spanish names (e.g. for countries)
+</b>
+
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+All country names are based upon how they are spelled in the Spanish language (Spanish is chosen over English due to the spelling more accurately representing how words are spoken). 
+
+<br>
+<br>
+
+
+Once you have the spelling of the name you will need to convert this in the new language. For example, South Africa would be sudáfrica in Spanish. Then this would be converted to the new language based on the rules below.
+
+
+<br>
+<br>
+
+
+Remove all ‘Spaces’ and ‘tildes’. For example, ‘ sudáfrica’
+ will change to ‘sudafrica’ AND ‘estados unidos’ will change to ‘estadosunidos’
+
+<br>
+<br>
+
+
+Change all ‘ñ’ sounds to ‘n’. For example ‘españa’ will change to ‘espana’
+<br>
+<br>
+
+
+Afterwards you would use this to create a string of numbers
+
+<br>
+<br>
+
+
+e.g.  sudafrica
+19 15 21 20 8 1 6 18 9 3 1 
+
+<br>
+<br>
+
+
+Then the word is made up by using two syabills consisting of a definging sound, a oculto sound, a bridiging sound and a estancado sound, in the first syabill. The second syabill will start with a stagement sound, followed by a oculto sound, followed by bridiging sound, followed by a stagement sound. 
+
+<br>
+<br>
+
+
+For example,
+
+<br>
+<br>
+
+
+First syllable (
+
+<br>
+
+
+svp
+
+<br>
+
+
+R
+
+<br>
+
+u
+
+
+<br>
+
+
+ks
+
+<br>
+
+<br>
+
+
+Second syllable 
+
+<br>
+
+<br>
+
+
+sk
+
+<br>
+
+
+R
+
+<br>
+
+
+u
+
+<br>
+
+
+ks
+
+<br>
+<br>
+
+
+
+The oculto sound after the definición sound tells you if the word is greater than 6 letters long and if so, by how many letters.
+
+<br>
+<br>
+
+
+There are 6 oculto sounds. If It is the first one then it means that the word is 6 letters or less. If it is the second one, then it means that the word is 7 letters. If it is the third oculto then it is 8 letters long. Note the below.
+
+<br>
+<br>
+
+R=6 letters or less
+
+<br>
+
+
+L=7 letters long
+
+<br>
+
+
+R*=8 letters long
+
+<br>
+
+
+L*=9 letters long
+
+<br>
+
+
+R@=10 letters long
+
+<br>
+
+
+L@=11 letters or more.
+
+
+<br>
+<br>
+
+
+If there are less than 6 words in a letter then you keep adding ‘a’ to the end of the word until you get a 7 letter long word. For example, ‘Chile’ is 5 letters long, therefore to make it 6 you would change it to  ‘chilea’
+
+<br>
+<br>
+
+
+The next letters are based upon the Roman alphabet (26 letters)(All spaces are removed for simplicity).  You would divide 26 by the number of sounds and then use the remainder to decide which number to use. 
+
+
+<br>
+<br>
+
+
+For example, 
+
+<br>
+
+There are 6 different oculto sounds. So to represent ‘P’ (for example) you would convert ‘P’ to 16 and then divide 16 by 6. This leaves you with 2 and 4 remainder. You would use this remainder for the 4t oculto sound, which is L*
+
+<br>
+<br>
+
+
+Another example would be as follows: to represent ‘X’ with estancado sounds, you would need to remember that there are 13 stagement sound combinations at the end of a syllable, and 10 at the start. So if the ‘x’ is at the end of a syllable, you convert ‘X’ to  24. Divide 24 by 13, to get 1 and 11 remainder. The 11th estancado sound is ‘tsh’. If the ‘x’ was at the start, you would dived 24 by 10, to get 2 and 4 remainder. Leaving you with ‘sn’
+
+
+<br>
+<br>
+
+
+here is an example of all the process
+<br>
+<br>
+
+
+Chilea
+
+<br>
+<br>
+
+
+3 8 9 12 5 1
+
+<br>
+<br>
+
+
+6 letter word = first oculto sound=R
+
+<br>
+<br>
+
+
+[3] +                     [8] +                          [9] +                        [12] +                [5] +                  
+
+<br>
+<br>
+
+
+
+puente sound[8] +estancado sound[13]+estancado sound+10]oculto sound+[6]puente 
+
+<br>
+<br>
+
+
+sound[8]
+
+<br>
+<br>
+
++1
+
+<br>
+<br>
+
+estancado sound[13]
+
+<br>
+<br>
+
+
+3/8=0 and 3 remainder, the 3rd oculto sound is ‘OA?’
+
+<br>
+
+
+8/13=0 and 8 remainder, the 8th  stagement sound is ‘ntsh’
+
+<br>
+
+
+9/10=0 and 9 remainder, the 9h  stagement sound is ‘s’
+
+<br>
+
+
+12/6=2 and0  remainder, the 6nd oculto sound is ‘L@’
+
+<br>
+
+
+5/8=0 and 5  remainder, the 5th puente sound is ‘e’
+
+
+<br>
+
+
+1/13=0 and 1 remainder, the 1st  stagement sound is ‘z’
+
+<br>
+<br>
+
+
+Therefore…
+Chile=ssp-R-u?-ntsh z-R@-e-z (sspRu?ntsh - zR@ez) 
+
+<br>
+<br>
+
+
+You may also do these for names of languages as well. E.g. Russian (the language) may be converted to a name using this method. You would use the ‘name definición sound’ for this.
+
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Reading Dictionary Attached
+</b>
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+When reading the dictionary if you see a ‘#’ between words, it means that the first word and second word is the meaning of the word. This is an example where you will need further suffix sounds to further explain the concept. The concept of suffix sounds is explained later in this document.
+
+
+<br>
+<br>
+
+
+For example, ‘alive/dead’ let’s the context determine what it is. If you want to specifically describe it as dead you need to use the non/no suffix.
+
+<br>
+<br>
+
+
+If you want to describe something as dying, you would use the weak suffix. If you want to describe something as perfectly alive you would use the strong suffix
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Basics of the new language
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+Every word is a description, meaning that it describes something. A word can either be describing another word in the sentence or be describing something outside of the sentence.
+
+
+<br>
+<br>
+
+
+When words describe something outside of the sentence, the order of those words do not matter.
+For example,
+the sentence ‘[cute][smelly][happy]’ is equivalent to ‘[happy][cute][smelly]’, or whatever order you wish to say the words in.
+
+
+<br>
+<br>
+
+
+However, when a word describes another word, then the order does matter. It needs to be either placed in front of a word it is describing or in front of word/list of words, that is describing the same thing, which it is describing.
+
+
+<br>
+<br>
+
+For example,
+
+
+<br>
+
+
+the sentence ‘[happy]{greatly}[cute][smelly]’ is different from the sentence ‘[happy][cute]{greatly}[smelly].
+
+
+<br>
+<br>
+
+
+The first sentence describes something as being very happy, while being cute and smelly, at the same time. The second sentence on the other hand, describes something as being very cute, while describing it as happy and smelly, at the same time.
+
+
+<br>
+<br>
+
+
+The sentence‘[smelly][smelly]’ is simply a repetition of ‘smelly.’ It has no further meaning. However, for grammatical purposes explained later in the document, you may be required to do such repetition.
+
+<br>
+<br>
+
+
+The sentence ‘[smelly]{smelly}’ on the other hand, describes something as having a specific kind of smelliness. A smelly kind of smelliness.
+
+
+<br>
+<br>
+
+
+If you have more than one word, describing the same word, which of the words appears first is not of importance.
+
+
+<br>
+<br>
+
+
+For example,
+
+<br>
+
+
+the sentence ‘[anger]{great}{revengeful}{evil}’  is the same as ‘[anger]{revengeful}{great}{evil}.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+<b>
+Mixing word
+</b>
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+If you want to describe something as being a mix between two qualities, you would use the 'gRan’ word.
+
+<br>
+<br>
+ 
+For example,
+
+<br>
+
+
+ in the sentence ‘[bat][human]’ something is being described as being both a human and a bat. Therefore that sentence would imply that being a bat does not contradict being a human. However, the sentence ‘[gRan]{bat}{human}’ describes something as being half human and half bat. Maybe a human with bat like wings or something like the film ‘Batman’. The thing it is describing could be neither human nor bat, but shares qualities of both.
+
+<br>
+<br>
+
+<br>
+<br>
+
+	
+
+<b>
+The meaningless word
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+The word ‘glar’ has no meaning on it’s own. For example, [animal]{glar} is the same as saying [animal].
+
+<br>
+<br>
+
+
+This sound picks up the meaning of the sounds added to it. e.g. if a suffix sound is added to it then it picks up the meaning of that suffix sound. 
+<br>
+<br>
+
+
+This word may appear useless, but it becomes important for grammatical purposes.
+
+<br>
+<br>
+
+
+What a suffix sound is, will be explained later in this document.
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Generalising 
+</b>
+
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+Sometimes one would need to say something in General, as opposed to something specific. For example, the sentence ‘these video games are boring’ is different to saying ‘video games are boring’. If you wished to say ‘video games are boring’ in the new language  you would need to use the word ‘gRaLnsh’
+
+<br>
+<br>
+
+
+i.e.
+
+<br>
+
+
+Normal sentence
+[video games] [boring]
+these video games are boring
+
+<br>
+<br>
+
+
+Using the generaliser ‘gRaLnsh’
+[video games] {gRaLnsh} [boring]
+video games in general are boring
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+The clause
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+ 
+In the new language, a clause is all the words that describe the word that describes something out side of the sentence, or describes a word that leads to describing that.
+For example, the sentence below consists of two clauses.
+
+
+<br>
+<br>
+
+[gRan]{human} ^male^ {bat} [black] {evil} {scary} {strange} {wonderful} {pretty}
+
+<br>
+<br>
+
+clause 1= [gRan]{human} ^male^ {bat} 
+<br>
+<br>
+
+
+(gRan is the mixing word explained earlier in the document. So therefore this clause describes something as being half human and half bat, and specifically describes the type of human as being a male human ‘a man’)̧
+
+<br>
+<br>
+
+
+clause 2=[black] {evil} {scary} {strange} {wonderful} {pretty}
+
+<br>
+<br>
+
+
+this clause describes the thing as being black. Specifically a evil type of black, a scary type of black, a strange type of black, a wonderful type of black, and ultimately a pretty type of black.
+
+<br>
+<br>
+
+
+It is OK for a sentence to only contain one clause. It is also OK for the for a clause to contain only one word.
+e.g. [cat]
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Adding meaning to entire clause or sentence
+</b>
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+
+If you have the following sentence for example 
+
+<br>
+<br>
+
+
+‘[black] {only partly} [green] {only partly} [orange] {only partly} [transparent] {only partly} [purple] {only partly} [yellow] {only partly} [red] {only partly}{strange}’
+
+
+<br>
+<br>
+
+, the ‘{only partly}’ word is redundant. 
+
+<br>
+<br>
+
+
+There is a suffix sound you can use to remove such redundancy (kind of how you would use ‘him’ in English instead of mentioning ‘Jonathan’ all the time). There is another much simpler way that you could do this and that is with the word ‘gL@a?Lns’.
+‘gL@a?Lnsh’ allows you to to add a description to every word in the sentence. For example, you could apply ‘gL@a?Lnsh to the above and you will get the following.
+
+<br>
+<br>
+
+
+‘[gL@a?Lnsh’] {only partly} [black]  [green] [orange]  [transparent]  [purple]  [yellow]  [red] {strange}’
+
+<br>
+<br>
+
+
+If you want to, you can also make it apply to different levels of descriptions. For example, ‘[black] {partly} ^wonderfully^ [cat] {happy} ^wonderfully^ [spy] {secretly} {wonderfully>’ is a sentence where all second level words are being described as ‘wonderfully’. We could represent this sentence using ‘gL@a?Lnsh’ as followers
+
+<br>
+<br>
+
+e.g.
+
+<br>
+
+
+‘{gL@a?Lnsh} ^wonderfully^ { [black] {partly}  [cat] {happpy}  [spy] {secretly}’ = ‘[black] {partly} ^wonderfully^ [cat] {happy} ^wonderfully^ [spy] {secretly} {wonderfully>’ 
+
+<br>
+<br>
+
+
+‘gLe?Lns’ is the same as above but only works within the clause and works cross all the words in the clause regardless of that level.
+e.g. ‘[black] {intensely} {strange} ^intensely^ ^wonderfully^ {(^intensely^)}  [cat] {happy}’=   ‘[gLe?Lns’] {intensely} [black] {strange} ^wonderfully^  [cat] {happy}’
+
+
+<br>
+<br>
+
+
+Notice that the second clause ‘[cat] {happy}’ remains unchanged.
+
+
+<br>
+<br>
+
+
+You can also use this for different levels as well
+
+<br>
+<br>
+
+e.g.
+
+<br>
+
+
+‘{gLe?Lns’} ^intensely^ [black] {strange} ^wonderfully^  [cat] {happy}’= ‘[black]  {strange} ^intensely^ ^wonderfully^ {(^intensely^)} [cat] {happy}’
+
+<br>
+<br>
+
+
+Notice that the ‘[black]’ this time is not described as an intense kind of black. Only a black that is intensely strange but at the same time wonderfully (intensely wonderfully) strange.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+<b>
+Punctuation 
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+There exist only three punctuation marks that can be placed at the end of a sentence. This is the full stop ‘.’ (used for statements) [they look exactly like normal full stops but instead are put in the middle of the line, as opposed to the bottom], the question mark ‘i’ [the question mark is drawn like a lower case i / an upside down exclamation mark] (used for questions), and the final is an exclamation mark ‘!’ (used for commands) [it should be noted that unlike English, these do not change the pronunciation as used with any command or questions.
+
+<br>
+<br>
+
+
+ For example, ‘please do come eat whatever you like!’ does not mean that the person is shouting/showing emotion. It simply means that a command was giving.
+
+<br>
+<br>
+
+
+The above punctuation is optional. They may be included or left out based upon the writers preferences. Although not necessary, the intended purpose of punctuation is to make reading easier and quicker.
+
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Questions and commands
+</b>
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+In order to use the punctuation above you need to know if something is a question, exclamation or statement. The new language has different rules for what is considered a  question, exclamation or statement, than other languages. Luckily the rules are fairly straight foreword. Everything is a statement if it does not contain one of the following 6 command/question words (listed below), then the sentence is a statement. 
+
+
+<br>
+<br>
+
+
+If you ask someone to ‘go fetch me a tool’ or ‘drink water’ this is treated as a statement. You are simply explaining more about yourself as a beggar, and the type of begging you are doing is a ‘fetch me a tool’ type of begging
+
+<br>
+<br>
+
+e.g. [me] [strongly begging/insisting] {you} {bring} ^to me^
+The above would be only a description of yourself and therefore is not a command and therefore would end in a full stop as opposed to an exclamation mark.
+
+
+
+<br>
+<br>
+
+
+There exist three of these ‘please’ words (to show what other languages may refer to as a command)
+gR*uns=please/asking to (but suggest if you say ‘no’ it is not a problem. Not insisting.
+
+<br>
+<br>
+
+gR@antsh=begging for something. Being insistent.
+
+<br>
+
+gLa?s=demanding that someone do something. This word is not intended to be rude.
+
+<br>
+<br>
+
+All three words only describe the type of ‘beggar’ and what they are begging for. They do not turn a sentence into a command.
+
+
+<br>
+<br>
+
+
+There exist 6 command/question words. There are Three categories. Each category has a word for yes/no questions and one word for general questions. All commands in the new language are in reality questions. Kind of like how you would say ‘tell me what time it is’ in English.
+
+
+<br>
+<br>
+
+
+The first category is for rhetorical question. Sentences containing these are statements and therefore end with a full stop. These questions are used when no answer is needed. e.g. when a teacher explains to a class and asks “Therefore, what is 5x”. They do not want the students to give an answer. Or if your boss asks you “Is this all you done for five weeks”. A response is not needed.
+
+<br>
+<br>
+
+
+1.
+
+<br>
+
+
+For questions with a yes/no answers
+gLe?tsh
+
+<br>
+
+
+2.
+
+<br>
+
+For general questions
+gRas
+
+<br>
+<br>
+
+
+The second category is used for questions out of curiosity. Like the above, the speaker is asking but they not expected an answer from someone. However, the speaker does indeed want to know the answer out of curiosity. When a boss asks “Is this all you done for five weeks” he knows the answer and isn’t curios about what it might be. 
+
+
+<br>
+<br>
+
+
+If someone thinks to themselves “what is baby powder actually made of?”, they aren’t asking anyone for an answer but at the same time, they do want to know the answer. Most of the time, this is done when the speaker thinks to himself/speaks to himself but there are other situations where it may occur.
+
+<br>
+<br>
+
+
+If a sentence uses one of the two words found in the second category, then it ends in a question mark.
+
+<br>
+<br>
+
+
+1.
+
+<br>
+
+
+For questions with a yes/no answers
+gRents
+
+<br>
+
+
+2.
+
+
+<br>
+
+For general questions
+gLe?nsts
+
+<br>
+<br>
+
+
+The third category is to command that people tell you an answer to a question and therefore ends in an exclamation mark. E.g. “tell me what time it is.” This is not rude and it is expected that you use this word when wanting an answer from someone.
+
+<br>
+<br>
+
+
+1.
+
+<br>
+
+
+For questions with a yes/no answers
+gROARz
+
+<br>
+
+2.
+
+<br>
+
+For general questions
+gLOA?Rz
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+How to ask questions.
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+For the first type of question word for the three categories, you simply describe the thing outside of the sentence with this word.
+
+<br>
+<br>
+
+
+E.g. something is a cat and is black
+[cat] [black]
+
+<br>
+<br>
+
+
+as a question
+
+<br>
+<br>
+
+something is a cat and is black?
+[gROARz] [cat] [black]
+
+<br>
+<br>
+
+For the second type of question word for the three categories, you simply replace the word where the information was being said.
+
+<br>
+<br>
+
+
+e.g. in the sentence ‘yesterday, the cat was black’ you can replace the term ‘yesterday’ with when with
+
+<br>
+<br>
+
+e.g. 
+
+<br>
+
+[yesterday] [cat] [black]
+to
+[gLOA?Rz] {time} [cat] [black]
+what time was the cat black
+
+<br>
+<br>
+
+
+You also may have noticed that when is used by describing the ‘what’ as a ‘time’ type of ‘what’. You can do this trick to make other kind of question words.
+
+<br>
+<br>
+
+
+e.g.
+
+<br>
+
+
+[gLOA?Rz] {time} = when
+[gLOA?Rz] {manner/way} = how
+[gLOA?Rz] {place/location} = where
+[gLOA?Rz] {animal/person} = who
+[gLOA?Rz] {reason} = why
+etc
+
+<br>
+<br>
+
+
+Adding focus to a sentence
+In the following sentence ‘[cat] [black]’, you describe something as being a cat and black. However, there may be times when you want to put focus/add new information, on a specific word. For example, if someone says the cat is white, you do not want to just say ‘[cat] [black]’. You want to say that it is specifically the blackness that is new information. The way you would do this is with the word ‘gLOAL*’
+
+<br>
+<br>
+
+
+[cat][black] {gLOAL*}=The cat is black
+
+<br>
+<br>
+
+[black] {gLOAL*} [cat] = The black thing is a cat
+
+<br>
+<br>
+
+
+This is also important for the 6 question/command words used above. 
+
+<br>
+<br>
+
+
+For example, if a teacher were to ask a rhetorical question a in the example below
+
+<br>
+<br>
+
+
+e.g. 
+
+
+<br>
+
+Student “The bird is inside.”
+
+<br>
+<br>
+
+
+Teacher asking rhetorically “where is the bird?”
+
+
+<br>
+<br>
+
+student “[bird] [inside]”
+
+<br>
+<br>
+
+
+Teacher “[bird] [gRas] {place/location} {gLOAL*}”
+
+
+
+<br>
+<br>
+
+
+Clearly the teacher could have simply asked “[bird] [gRas] {place/location}”, but by adding “{gLOAL*}”, he is making it clear that where the bird is the focus of the sentence. 
+
+
+<br>
+<br>
+
+
+There is also a no/non suffix sound (suffix sounds are explained later in the document) that confirms that a word is not a ‘gLOAL*’ but the vast majority of the time this will not be needed as you should be able to understand this from both the context and where the ‘gLOAL*’ word is placed. Despite this, below exist an example using this no/non suffix.
+
+<br>
+<br>
+
+
+[cat][black] {gLOAL*}=The cat is black
+
+<br>
+<br>
+
+
+[cat]{gLOAL*+no/no Suffix}[black] {gLOAL*}=The cat is black
+
+<br>
+<br>
+
+
+[cat]{gLOAL*+no/no Suffix}[black] =The cat is black
+
+<br>
+<br>
+
+
+In the third example above, it is clear that the ‘[black]’ is the gLOAL*, even without the word stating it, because the sentence is simple. In more complex sentences it isn’t so clear. For that reason it is recommended that you use ‘gLOAL*’ instead of ‘gLOAL*+no/no Suffix’
+
+
+<br>
+<br>
+
+e.g. [black]{gLOAL*+no/no Suffix} [sick] [skinny] [meoing] {annoyingly}
+
+<br>
+<br>
+
+
+It only makes sense to use the above if all the the other qualities would need a ‘gLOAL’ word and you do not wish to write it all.
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Describing food derived from plants
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+In the new language you can describe food derived by plants using the following words ‘P@LAR, P@LARN, P@LART, P@LARts, P@LARTsh’  and food derived from plants/animals using the following words ‘p@Luz, p@LOAv, p@LOARv, p@Lef’. 
+
+
+<br>
+<br>
+
+
+The describes products produced from plants/animals and does not necessarily need to be used for food. However, when describing food, these terms become useful.
+
+<br>
+<br>
+
+
+The meaning of these words above can be individually found in the dictionary attached to the folder this document is in, but what is important is that you can specify what kind of plant you are referring to. Then you can use a term from above to further describe it.
+
+
+<br>
+<br>
+
+e.g. ‘P@LARN’ is used to describe things that are produced by the plant but to some extent are somewhat external to the plant, such as fruit. This is opposed to internal parts of the plants such as it’s roots, wood, etc.
+
+
+<br>
+<br>
+
+
+
+If you add a word like ‘apple tree plant’ to this, we get a more specific meaning of the word.
+
+
+<br>
+<br>
+
+e.g. [P@LARN] {apple plant tree} = fruit produced by an apple tree. 
+
+<br>
+<br>
+
+
+Clearƴ the above is referring to Apples, since no other fruit is produced by an apple tree.
+
+
+<br>
+<br>
+
+
+You could use one of the ‘p@Luz, p@LOAv, p@LOARv, p@Lef’, to describe further.
+
+<br>
+<br>
+
+
+e.g. p@LOAv=juice
+
+<br>
+<br>
+
+
+[ p@LOAv] {P@LARN} ^apple plant tree^ = apple juice.
+
+<br>
+<br>
+
+
+Describing food using these words are helpful and you can describe most food using the method above. However, the result is incredible long as there are many syllables to be said. It is for that reason that a native speaker would probably just use the ‘shortening suffix sound’ if they feel the context is sufficient. How Suffix sounds work will be explained later in this document.
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Hi and How are you
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+In the new language there are different words for hello and goodbye based upon whether you know the person. There is only one word for ‘how are you?’ Therefore, regardless of which ‘hello’ you use, you would still use the same ‘how are you’ afterwards. These two words go together in the same sentence, they are not split between two different sentences. The reason for this is when you say ‘hello’ and ‘how are you’ in one sentence, what you are saying directly translated is, you are described as a receiver of ‘hello-ness’ and a receiver of ‘how are you-ness’
+
+
+<br>
+<br>
+
+
+For example, ‘GRuRn’ is used to say hello to someone you met before and ‘gLu?Rn’ is used to say ‘how are you’.
+
+<br>
+<br>
+
+
+[gRuRn] [gLu?Rn]
+
+
+<br>
+<br>
+
+
+It is also worth noting that the ‘how are you’ word does not only ask how you are feeling. It asks how are you feeling, what is around you/happening in the world/what are you currently experiencing.
+
+
+<br>
+<br>
+
+
+You could respond with something like “I’m feeling ill today” OR “The clouds look a little strange today” OR “The president just dead. I saw it on my phone”
+
+<br>
+<br>
+
+
+You could respond simply with ‘gROARnss’. This is a word for any command/question that you wish to pass away without actually answering and isn’t seen as rude to use. You can use it here, despite the fact that ‘gLu?Rn’ isn’t a question, but rather a description. It is describing yourself as receiving ‘gLu?Rn’.
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+How to describe things
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+As mentioned before, all words in the new language are either describing another word or describing something outside of the sentence. The way you would know what the word describes is by the word form. 
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+There are 3 different forms a word can be in. 
+
+<br>
+<br>
+
+
+The first form describes something outside of the sentence 
+For example,
+in the sentence ‘[anger]{revengeful}^greatly^’ the ‘[anger]’ is a word in the first from, as it describes something as being angry.
+
+<br>
+<br>
+
+
+The second form describes a word that is in the first form.
+
+
+<br>
+<br>
+
+
+For example, in the sentence 
+
+<br>
+<br>
+
+
+‘[anger]{revengeful} ^greatly^ the ‘{revengeful}’ 
+
+<br>
+<br>
+
+
+is a word in the second form, as it describes the ‘[anger]’ (which is a word in the first form) as being a specific kind of anger. It describes it as being a revengeful type of anger. 
+
+<br>
+<br>
+
+
+The third form describes a word that is in the second form.
+
+<br>
+<br>
+
+
+For example, in the sentence 
+
+<br>
+<br>
+
+
+‘[anger]{revengeful}^greatly^’ the ‘^greatly^’ is a word in the third form, as it describes the ‘{resentful-ness}’ 
+
+<br>
+<br>
+
+
+(which is a word in the second form) as being a specific kind of revenge. It describes it as being a great/extreme type of resentfulness. 
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+How  the three word types are spoken and written 
+</b>
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+First word form
+
+<br>
+<br>
+
+You know what word form it is by where the syllable is. If the first syllable remains unbroken, then that means that the word is in the first form.
+e.g. 
+‘grut’ OR ‘PRE*Rnss - sNR*OAnss’ (this word is 2 syllables long because the first syllable is unbroken’)
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+second word form
+
+<br>
+<br>
+
+If a word is in the second form, then the first syllable is broken into two syllables. The second syllable, now starts with a  puente sound
+
+<br>
+<br>
+
+
+e.g. ‘gr - ut’ OR ‘PR - -ER*nss - sNR*OAnss’ (this word is 3 syllables long because the first syllable was broken down into two separate syllables’)
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+Third word form
+
+<br>
+<br>
+
+For the third word form, you keep it the same as the second word form but move the puente sound to fit between the grupo sound and the first oculto sound.
+
+<br>
+<br>
+
+
+e.g. ‘gur - t’  OR ‘PER - R*nss – sNR*OAnss’’
+
+<br>
+<br>
+
+
+The above examples wouldn’t actually be correct as we need to now join the broken syllable to make one syllable (If this is not possible due to it having the two oculto sounds, then the extra oculto sound needs to form another syllable.
+
+<br>
+<br>
+
+
+eg. ‘gurt’ (is the correct version) OR ‘PERnss – R* – sNR*OAnss’’
+
+<br>
+<br>
+
+
+(Being able to recognize third form words with double oculto sounds, is probably one of the hardest parts of the language. However, if you learn a few examples off by heart, you brain will be able to follow the pattern. Due to the way the new language is structured, learning words is easy as you can  hear how many words are in a sentence. This should be more than sufficient to make up for the time a student has spent to study both, the double oculto sound word, and it’s third word form.)
+
+<br>
+<br>
+
+
+In writing, letters in the primary alphabet have direction, showing which way they are facing. As a rule, any sound in the alphabet that is placed at the start of a syllable, is written with it’s letter facing in the opposite direction. Therefore you can read where the syllables are and so you know the word form while reading text in the new language.
+
+
+<br>
+<br>
+
+
+Due to the fact that the writing system has no assigned letter for the ‘R’ sound, as it needs to attach to another letter: the ‘R’ sound attaches to the last sound of the previous syllable in writing. Due to the fact that it is not possible to pronounce a oculto sound at the end of a syllable, after the final stagement sound/grupo, it is clear that the oculto sound forms a new syllable. 
+
+
+<br>
+<br>
+
+e.g. PERnss – R* – sNR*OAnss = PERnssR* – sNR*OAnss (when written).
+
+<br>
+<br>
+
+
+Words that describe words in the third word form
+As mentioned before, there are only three word forms that exist in the new language. If you wish to describe a word in the third type, there exists no forth word form, to allow you to do this.
+<br>
+<br>
+
+
+For example, in the sentence ‘[anger]{revengeful}^greatly^’ if you want to describe the  greatness/extremeness of the revengefulness, as being only slightly great, there exists no other word to do this.
+
+<br>
+<br>
+
+
+The way we get around the problem mentioned above, is by use of another word ‘gLa?n’, to assist us with this. ‘gLa?n’ is always said in the first word form, in this circumstance. The words after this will begin in the first word form again
+
+<br>
+<br>
+
+For example, in the sentence 
+
+<br>
+<br>
+
+
+‘[anger]{revengeful}^greatly^ [gLa?n],[slightly]{probably}’
+
+<br>
+<br>
+
+
+, the word ‘gLa?n’ allows you to describe words of the third form. The slightly-ness is being described as something that is believed to be true, but could be wrong, and the greatly-ness is being described as only being slightly great. The [slightly] word be said like any other word in the first word form and the {probably} word like any other word in the second word form.
+
+<br>
+<br>
+
+
+The way you would show that the ‘gLa?n’ no longer applies, is by putting it in the second form. This is to indicate that all words in the first word form going forward, are describing something outside of the sentence.
+
+
+<br>
+<br>
+
+
+For example, in the sentence [anger]{revengeful}^greatly^[gLa?n][slightly]{probably}{gL - a?n}[animal]’ the animal (not the ‘greatness’/‘extremeness’) is being described as both being angry and being animal like. The rest of the words in the sentence simply further explain what type of anger the animal has. 
+
+<br>
+<br>
+
+
+For sentences with many different ‘gLa?n ‘words, it can be difficult to keep track of what the speaker is saying. Therefore, when you say ‘gLa?n’ in the third form, then it resets the rest of the sentence to how it would be, if no ‘ gLa?n were said at all. This is different to ‘gLa?n’ in the second word form, as ‘ gLa?n’ in the second word form only brings it down three levels.
+
+<br>
+<br>
+
+
+ In other words, all words in the first form, said after the ‘ga?Ln’ (third form), are describing something external to the sentence.
+
+
+<br>
+<br>
+
+
+However, in reality, such deep description upon descriptions, isn’t likely to exist. In most cases a single ‘gLa?n’ would be sufficient.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Syllable stress (names are an exception to this rule)
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+In English, certain syllables are stressed and unstressed. In the new language, stress is not used at all. What the new language does have however, is have syllable pairs. syllables inside a word appear in pairs of two for each word. 
+
+
+<br>
+<br>
+
+
+e.g.
+
+<br>
+
+*gr-ut* *o-mut* - *ta* - *plOAlf*
+
+
+<br>
+<br>
+
+
+Notice that in the above example, ‘*ta*’ and *plOAlf*  are said apart, as opposed to together as ‘*ta-plOAlf*’. This is because ‘ploaf’ is a new word and the first syllable of a new word always attaches to the next syllable of the same word, and never to the previous syllable of the word before it. Syllable pairs never cross between words.
+
+
+
+<br>
+<br>
+
+
+Sometimes (but not often) it may be difficult to say two syllables together, then it is OK to split a pair into two. However, the other pairs must stay the same.
+
+<br>
+<br>
+
+
+e.g.
+
+<br>
+<br>
+
+
+‘*sPRE*Rnss* - *sNR*OAnss*’ instead of ‘*svPRE*Rnss - sNR*OAns*’ 
+
+
+<br>
+<br>
+
+
+‘*sPRE*Rnss* - *sNR*OAnss* - *o-mut* - *ta* - *plOAlf*
+
+
+<br>
+<br>
+
+another example would be
+
+<br>
+<br>
+
+
+‘*sprelks-met* - *ta*’ = ‘*sprelks* - *met* - *ta*’
+
+
+<br>
+<br>
+
+Please note that it would be incorrect to say
+
+
+<br>
+<br>
+
+*sprelks* - *met - ta*
+
+
+<br>
+<br>
+
+This is wrong because ‘ta’ is the third syllable of the word and therefore needs to form a pair with the fourth term, not the second term (‘met’). 
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Word extensions 
+</b>
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+No word in the new language (even non official words) may end in a puente sound. 
+
+<br>
+<br>
+
+
+For any word, you can add a word extensions to the end of a word, and these word extensions end with a puente sound. These word extensions can consist only of a puente sound. 
+
+
+<br>
+<br>
+
+e.g. ‘pLuL*T-u’ is not a word extension OR ‘grut-u’ s not a word extension 
+
+<br>
+<br>
+
+
+Any other syllable consisting of letters from the primary alphabet and ending in a ‘puente sound’, is a word extensions, with the exception of diphthongs.
+
+<br>
+<br>
+
+
+For example, ‘sgRaz’ can become ‘sgRaz-sa’, ‘sgRaz-stre’, ‘sgRaz-ru’, or any other combination. How ‘sa/su/sh^u/ect’ and ‘ra/lu/l@e/ect’ are drawn can be seen where the other examples of how the other sounds in the alphabet are drawn. You will find these images attached in the same folder that this document is in.
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Diphthongs are not allowed 
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+e.g. you cannot say ‘gruz-tai’, since diphthongs cannot be said.
+
+<br>
+<br>
+
+
+Only one of these extensions are allowed to be added. So you cannot say ‘gruz-ta-ne’  for example.
+
+<br>
+<br>
+
+
+These extensions have no meaning of their own and may be added whenever the speaker wishes. However, they are needed in order to add certain grammatical features to words.
+
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Word tenses
+</b>   
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+By default, all words in the [Ukku Language] contain no tenses. However, tenses can be added onto a word. The way you would give tense to a word is by lengthening the sound in a word. You simply say that sound for a slightly longer period of time, than the other sounds.  
+
+
+<br>
+<br>
+
+
+In writing, you would show a lengthened sound by repeating a letter (writing it twice). The letter being repeated, faces the standard direction. Otherwise it would be read as two different syllables if facing the opposite direction to the standard direction. For example, ‘grenn’ is a tense, while ‘gren-n’ is a word with the ‘n’ sound said twice at the end. 
+
+
+<br>
+<br>
+
+
+Tenses are determined in terms of the speaker or event. For example, if talking about yesterday, it is normal to switch back to present tense to describe things that happened yesterday and what happens today, would be in the future tense. 
+
+<br>
+<br>
+
+
+In other words, the tense is determined not by the current time line, but the time at which the events talked about, are taking place. If no other time line has been mentioned, it is assumed that the speaker is talking about the present moment he/she is talking in.
+
+
+<br>
+<br>
+
+
+The future tense is said by lengthening the first oculto sound. The third form is said differently and an example is shown below.
+
+
+<br>
+<br>
+
+e.g. ‘gRRoats-stra'
+
+<br>
+<br>
+
+
+OR (if the word is in the third word form)
+
+
+<br>
+<br>
+
+
+‘gRRut-stra’
+
+
+<br>
+<br>
+
+
+The present tense is said by lengthening the puente sound. 
+
+<br>
+<br>
+
+
+e.g. ‘grOAOAts-stra’
+
+
+<br>
+<br>
+
+
+OR (if the word is in the third word form)
+
+<br>
+<br>
+
+
+
+‘grUUt-stra’
+
+
+<br>
+<br>
+
+
+The past tense is said by lengthening the first stagement sound/last sound of the syllable. 
+
+<br>
+<br>
+
+
+e.g ‘groatss-stra’
+
+<br>
+<br>
+
+
+OR (if the word is in the third word form)
+
+
+<br>
+<br>
+
+
+‘gruTT-stra’
+
+
+<br>
+<br>
+
+
+For the rest of the tenses you need to add a word extension, to the end of the word. 
+
+<br>
+<br>
+
+
+A lengthened estancado sound in the word extension, shows  that an action just  happened (e.g. I just ate.)
+For example, ‘groats-sttra’ or ‘groats-nnu’’
+
+<br>
+<br>
+
+
+A lengthened oculto sound in the word extension, shows that an action is still in the process of being done (e.g. I am eating)
+For example, ‘groats-strra’ or ‘groats-rro’
+
+
+<br>
+<br>
+
+
+A lengthened puente sound in the word extension, shows that an action was just about to be completed  (e.g. I was about to start eating.)
+For example, ‘groats-straa’ or ‘groats-roo’
+
+
+<br>
+<br>
+
+
+A lengthened groupererble sound in the word extension, show an  hypercritical tense
+For example, ‘gref-sstra’ or ‘gref-sse’ 
+
+
+<br>
+<br>
+
+
+This hypercritical tense is used for something that has not happened yet but could happen or could have happened. For example, ‘I would have liked that.’ vs ‘I like that.’ OR ‘If I would have been there’ vs ‘I was there’
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Suffix sounds
+</b>
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+All suffix sounds, and their meanings, are listed in the suffix sounds alphabet. Suffix sounds are added to words to give further meaning to the word. For example, the sentence ‘[dead]-brought about/because of, suffix sound-me-[him]’ means that I killed him. Literally it means that the man is dead because of me.
+
+
+<br>
+<br>
+
+
+Suffix sounds can either be added inside the word (between syllables) or at the end. The meaning of the suffix sound changes based upon if the sound is added inside the word or at the end of it. The meaning for each suffix sound for inside a word vs for at the end, can be seen by the spreadsheet attached in the suffix sound alphabet. 
+
+
+<br>
+<br>
+
+
+Suffix sounds act like their own syllable and therefore are written in a manner that does not show direction (they are identical when flipped horizontally). 
+
+
+<br>
+<br>
+
+
+If a word only consists of one syllable, then you will need to add a word extension at the end, to stop the suffix sound from being at the end of the word.
+
+<br>
+<br>
+
+For example, ‘gruz’ will need to become ‘gruz-na’ as to allow a suffix sound inside of the word ‘gruz-suffix sound-na’
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+  
+<b>
+Pronoun sounds
+</b>
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+Attached you will find the 8 pronoun sounds (e.g. I/myself). 
+
+<br>
+<br>
+
+
+For example, Boy + ‘me pronoun sound’ describes something as being both me and a boy. In other words it says “I am a boy”
+
+
+
+<br>
+<br>
+
+
+If a pronoun sound appears directly after a suffix sound, then it describes the suffix sound instead. 
+
+<br>
+<br>
+
+
+For example
+
+
+<br>
+
+‘dead’ + ‘because of suffix sound’ + ‘me pronoun sound’ = dead because of me (it does not mean I am dead because of me)
+
+<br>
+<br>
+
+
+OR 
+
+
+
+<br>
+<br>
+
+
+‘dead’ + ‘us including you pronoun sound’ + ‘because of suffix sound’ + ‘me pronoun sound’ = we are dead because of me (i.e. I killed us)
+
+<br>
+<br>
+
+
+
+It is possible for more than one pronoun sound to appear after a suffix sound. As long as they appear directly after the suffix sound they are applicable to that suffix sound
+
+<br>
+<br>
+
+
+For examples
+
+<br>
+
+
+‘dead’ + ‘it pronoun sound’ ‘because of suffix sound’ + ‘me pronoun sound’ ‘you pronoun sound’
+
+<br>
+<br>
+
+
+It is dead because of you and me.
+
+
+<br>
+<br>
+
+
+As with suffix sounds, the meaning of the pronoun sound changes based upon it’s position in the word. If it appears at the end of a word, then it means that it is describing something outside of the sentence. If it however, appears in between a word, then it describes that was a being a specific type of word with those pronoun qualities.
+
+<br>
+<br>
+
+
+For example,
+
+<br>
+
+[happy-me]=I am happy-me
+[happy-me-ta]=a specific type of happiness that is a ‘me kind of’ happiness.
+
+
+<br>
+<br>
+
+
+Another example
+[dog] {happy-me}=a dog that is described as being both happy and ‘me’ like.
+
+
+<br>
+<br>
+
+
+Adding numbers to words
+Like with pronoun sounds, numbers also have different meanings based upon whether they are at the end of, or inside a word.
+
+
+<br>
+<br>
+
+
+If a number appears at the end of a word, then it means that the number is applied to quantity. For example, 5 sheep, 2 cows, etc.
+
+
+
+<br>
+<br>
+
+
+Inside the word then it describes the object as being a type of object like that number.
+
+<br>
+<br>
+
+
+e.g.
+
+<br>
+
+plOAfl5=5 chairs
+plOAfl5ta=a chair that is ‘5 like’
+
+
+<br>
+<br>
+
+
+Each suffix sound in the alphabet is divided into ‘not applicable’, ‘quantitative’, ‘specific’ and ‘exceptions’ categories. 
+
+<br>
+<br>
+
+
+For all suffix sounds in the ‘exceptions’‘specific’, and ‘not applicable’ categories, the numbering has no effect. However, for numbering in the ‘quantitative’  category, zero and all positive numbers show the extent.
+
+
+<br>
+<br>
+
+
+It shows the degree/extent/how strong a word is.
+
+
+<br>
+<br>
+
+
+e.g. 
+
+<br>
+
+
+
+very strong/only partly strong. (The way you can think of this is 900 being very high and 0 being nothing)
+
+
+<br>
+<br>
+
+
+If a number appears directly after a suffix sound/after a pronoun appearing after a suffix, then it means that it applies to that suffix. As a rule it can only apply to the ‘quantitative’ (because that is the only one that makes logical sense).
+
+
+<br>
+<br>
+
+
+e.g. 
+
+
+<br>
+
+plOAlf+insult suffix+900=a very strong insult to say that something is a chair. It doesn’t mean that you have 900 insulting chairs.
+
+
+<br>
+<br>
+
+
+Repeating words in a sentence
+At times it may be useful to repeat a word twice, as to prevent confusion and ambiguity.
+
+<br>
+<br>
+
+
+E.g. while using many suffix sounds in the same word
+
+<br>
+<br>
+
+[grut]+me+cause suffix sound+you + compliment + 900 = [grut]+me+cause suffix sound+you[grut] compliment + 900
+
+
+<br>
+<br>
+
+Repeating a word has no effect on the meaning of that word.
+
+<br>
+<br>
+
+
+e.g.
+
+<br>
+
+[grut][grut][grut]=[grut]
+
+<br>
+<br>
+
+
+The two sentences above have exactly the same meaning
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Conjunction between sentences
+</b>
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+‘gLa?Rnts’ and ‘gLOA?T’, as can be seen in the dictionary for the language, both have the same meaning of ‘and’. Unlike with conjunctions in English, these conjunctions are used to show the end of a sentence while showing relation of the new sentence to the old one.
+
+<br>
+<br>
+
+e.g.
+
+<br>
+ 
+[cat][dead][gLOA?T]!?. [mother][crying] = the cat is dead and the mother is crying.
+
+<br>
+<br>
+
+
+‘gLa?Rnts’ means exactly the same thing.
+
+<br>
+<br>
+
+e.g.
+
+<br>
+
+[cat][dead][gLa?Rnts]!?. [mother][crying] = the cat is dead and the mother is crying.
+
+<br>
+<br>
+
+
+ However, when another word is described with them, they don’t mean the same thing as each other. The extra word explains/justifies why the conjunction is used.
+
+<br>
+<br>
+
+
+e.g.
+
+
+<br>
+
+[victory] [gLa?Rnts]!?. [I short] = I won and I was short
+
+<br>
+<br>
+
+
+[victory] [gLa?Rnts]  {talent}!?. [I short] = I won despite the fact that I was short
+
+
+<br>
+<br>
+
+
+The explanation/justification is ‘talent’. In other words the purpose of the conjunction is to further describe the talent.
+
+<br>
+<br>
+
+
+As can be seen from the above, when a word further describes the [gLa?Rnts], it changes it’s meaning from ‘and’ to  ‘despite’. When a word describes ‘gLOA?T’ however, it changes it’s meaning to ‘but’.
+
+
+<br>
+<br>
+
+e.g. 
+
+
+<br>
+
+
+[person] [short] [gLOA?T]!?. [not that short] = he is short and not not that shortening
+
+
+<br>
+<br>
+
+
+[person] [short] [gLOA?T] {height}!?. [not that short] = he is short but not not that shortening
+
+
+<br>
+<br>
+
+
+The explanation/justification is ‘height’. In other words the purpose of the conjunction is to further describe the height.
+
+
+<br>
+<br>
+
+
+If you describe the word using ‘gLaR’ (the meaningless word in the dictionary, then the meaning is changed again. 
+
+<br>
+<br>
+
+
+e.g. [cat][dead] [gLa?Rnts]!?. [hot][weather] = The cat is dead and the weather is hot
+
+
+<br>
+<br>
+
+
+[cat][dead][gLa?Rnts] {gl-ar}!?. [hot][weather]= The cat is dead because the weather is hot.
+
+<br>
+<br>
+
+
+There is no explanation/justification. In other words there is no purpose giving to justify the conjunction.
+
+
+<br>
+<br>
+
+
+[person] [bad] [gLOA?T]!?. [killer] = he is a bad person and he is a killer
+
+
+<br>
+<br>
+
+
+[person] [bad]  [gLOA?T] {gl-ar}!?. [not a killer]  = he is a bad person therefore he is a killer
+
+<br>
+<br>
+
+
+There is no explanation/justification. In other words there is no purpose giving to justify the conjunction.
+
+
+
+<br>
+<br>
+
+
+
+Each conjunction in the new language has an equivalent that isn’t used to join sentences but rather used to join words inside of that sentence. For example  ‘gR*uRntsh’ is used as ‘and’ for words inside the sentence
+
+<br>
+<br>
+
+
+e.g.[cat] [dog] [fighting] = something is both a cat and a dog and is fighting.
+
+<br>
+<br>
+
+[gR*uRntsh] {cat} {dog} [fighting] = the cats and dogs were fighting.
+
+
+<br>
+<br>
+
+
+Notice that like the mixing word, ‘{cat} {dog}’ appear in the second word form and describe the ‘and’ as a ‘cat and dog’ type of ‘and’.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+How to make sentences 
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+There are three ways to show the end of the sentence.
+
+<br>
+<br>
+ 
+1)
+
+<br>
+
+Use a conjunction word, as demonstrated in the section before this.
+
+<br>
+<br>
+
+
+2)
+
+<br>
+
+Use the suffix sound ‘OA  sound + Afrikaans G’ to show that the sentence has ended. When this suffix sound is placed at the end of a a word, it shows that the word is the last word of the sentence.
+
+<br>
+<br>
+
+e.g.
+
+<br>
+
+[cat] [black]+‘OA  sound + Afrikaans G’!?. [dark] [night] = the cat was black. The night was dark.
+
+<br>
+<br>
+
+
+3)
+
+<br>
+
+Use word extensions. If the word extnetion and the end the end of the word are the same, then that shows that the sentence has ended.
+
+
+<br>
+<br>
+
+
+[pR@uL*z] [plOAlf-flOA] [sspR@e?Rsh] [pLe?Rs-ta] = The chair was red. My clothes were missing.
+
+<br>
+<br>
+
+
+Notice that that it has to be exactly the same, so plOAlf-fOA, would not s
+<br>
+<br>
+
+
+how the sentence has ended because it is missing the 'l' sound. 
+
+<br>
+<br>
+
+
+Also note that 'grut-tu' would show an end to the sentence but 'grut-tru' wouldn't
+
+<br>
+<br>
+
+
+For words like glent you cannot start a syllable with ‘nt’ and therefore need to use the end of syllable suffix sound 
+<br>
+<br>
+
+
+for words in backwards form (eg tr*a?p) you cannot say r*a?p-pa, therefore you would need to put it first forward and then then add the ending pr*at-ta. So it will be tr*ap-ta
+
+
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Punctuation and spacing in the language 
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+There are no spaces between words. Instead words are separated with a ‘/’ symbol (a straight line starting at the bottom left and moving to the top right, if the standard direction is from left to right and vice verse if from right to left).
+
+<br>
+<br>
+
+
+(This ‘/’ sign is optional. One does not need to put it in as the definición sounds tell you when a new word begins. You can simply put the two words next to each other without a space, or ‘/’ [e.g. GlelzGrut]
+
+<br>
+<br>
+
+
+However, a ‘/’ is recommended because it makes texts easier to read. With computers, you won’t need to put the ‘/’ as it will automatically generate it. Therefore giving the reader the option to read the text with ‘/’ or without it.)
+
+
+<br>
+<br>
+
+
+Commas do not exist in the language. There only exists the three punctuation marks, used to indicate if it is a command, question or statement.
+
+<br>
+<br>
+
+
+If a word doesn’t fit at the end of 
+he page, there is no need to add any other marker. You would simply just write the rest of the letters of the word, on the line underneath it, in the opposite standard direction.  It is clear from the fact that the letters do not start in a definición sound, that they are not forming a new word.
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Showing medium
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+To show that something is a medium (e.g. medium height, not tall or short), one would use a combination of the ‘low quantity’ suffixes and the ‘high quantity’ suffixes.
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+<b>
+Working with many
+</b>
+
+<br>
+<br>
+
+
+If you say Jack and Jill enjoy sleeping and eating, it is assumed that both of them enjoy both activities. The default assumption is always like that. You would need to add other words in to specify if you meant otherwise. 
+
+<br>
+<br>
+
+
+Another example would be the sentence ‘James and Marry observed the audience with their 4 eyes’ which would mean that they are some 4 eyed aliens, or something.  If you say I have 23 homes with 13 swimming pools, it is assumed that each house has 13 pools in it. You will need to make use of other words, to clarify otherwise.
+
+<br>
+<br>
+
+
+The word you would use for this is ‘sgR@a?Lns’
+
+<br>
+<br>
+
+
+e.g. 
+
+<br>
+
+[houses]23[ sgR@a?Lns] {pools}23=I have 23 houses and altogether they have 13 pools between them.
+
+
+<br>
+<br>
+
+
+<br>
+<br>
+
+
+<b>
+Subjective words
+</b>
+
+<br>
+<br>
+
+<br>
+<br>
+
+
+
+In the new language, all subjective words are represented by emotions. For example, there would be no word for beautiful. Instead there is a word for the feeling you get. You describe that thing as giving you that feeling.
+
+<br>
+<br>
+
+
+e.g.
+
+<br>
+
+
+‘a giver/creator of  beauty’
+
+
+<br>
+<br>
+
+
+To say the above example you would use the first suffix sound meaning ‘brought about by’.
+
+
+<br>
+<br>
+
+
+To describe something a beautiful, you would use the ‘beauty feeling’ + the ‘creation/bring about’ suffix. That means that it creates/brings about that feeling.  
+
+
+<br>
+<br>
+
+
+e.g.
+
+
+<br>
+
+
+[beauty feeling] + suffix sound glottal k = it creates beauty = it is beautiful. 
+
+<br>
+<br>
+
+
+You may even add the habitual tense to this, if you want to specify that it’s not only a once off occurrence.
+
+
+
+
